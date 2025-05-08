@@ -3,7 +3,7 @@
 import pygame
 from characters.character import Character
 from characters.enemy import Enemy
-# from quests.quests import Quest
+from quests.quests import Quest
 from maps.layout import MapLayout
 
 class DungeonGame:
