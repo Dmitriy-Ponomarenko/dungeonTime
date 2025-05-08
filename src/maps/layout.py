@@ -1,3 +1,5 @@
+import pygame
+
 class MapLayout:
     def __init__(self, width, height):
         self.width = width
@@ -19,3 +21,7 @@ class MapLayout:
         if 0 <= x < self.width and 0 <= y < self.height:
             return self.map[y][x]
         return None
+
+    def display(self, screen):
+        # Placeholder for map rendering logic
+        pygame.draw.rect(screen, (255, 255, 255), (100, 100, 200, 200))
