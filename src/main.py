@@ -1,44 +1,30 @@
-# dungeon_game/src/main.py
+from setup_settings.settings import *
+from setup_settings.level import Level
+from pytmx.util_pygame import load_pygame
+from os.path import join
 
-import pygame
-from characters.character import Character
-from characters.enemy import Enemy
-from quests.quests import Quest
-from maps.layout import MapLayout
-
-class DungeonGame:
+class Game:
     def __init__(self):
         pygame.init()
-        self.screen = pygame.display.set_mode((800, 600))
-        pygame.display.set_caption("Dungeon Time")
+        self.display_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+        pygame.display.set_caption('Super Pirate World')
         self.clock = pygame.time.Clock()
-        self.running = True
-        self.player = Character("Hero", 100)
-        self.enemy = Enemy("Goblin", 50, 10)
-        self.quest = Quest("Find the Treasure", "Locate the hidden treasure in the dungeon.")
-        self.map_layout = MapLayout()
 
-    def main_loop(self):
-        while self.running:
-            self.handle_events()
-            self.update()
-            self.draw()
-            self.clock.tick(60)
+        self.tmx_maps = {0: load_pygame(join('src', 'data', 'levels', 'omni.tmx'))}
 
-    def handle_events(self):
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                self.running = False
+        self.current_stage = Level(self.tmx_maps[0])
 
-    def update(self):
-        pass
+    def run(self):
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
 
-    def draw(self):
-        self.screen.fill((0, 0, 0)) 
-        self.map_layout.display(self.screen) 
-        pygame.display.flip()
+            self.current_stage.run()
+
+            pygame.display.update() 
 
 if __name__ == "__main__":
-    game = DungeonGame()
-    game.main_loop()
-    pygame.quit()
+    game = Game()
+    game.run()
