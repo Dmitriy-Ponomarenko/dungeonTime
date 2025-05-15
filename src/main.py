@@ -30,8 +30,12 @@ class DungeonGame:
             if event.type == pygame.QUIT:
                 self.running = False
 
-    def update(self):
-        pass
+    def run(self):
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
 
     def draw(self):
         self.screen.fill((0, 0, 0)) 
