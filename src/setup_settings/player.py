@@ -13,12 +13,30 @@ class Player(pygame.sprite.Sprite):
 
 	def input(self):
 		keys = pygame.key.get_pressed()
-		input_vector = vector(0,0)
+		input_vector = vector(0, 0)
+		# Arrow keys
 		if keys[pygame.K_RIGHT]:
 			input_vector.x += 1
 		if keys[pygame.K_LEFT]:
 			input_vector.x -= 1
-		self.direction = input_vector.normalize() if input_vector else input_vector
+		if keys[pygame.K_DOWN]:
+			input_vector.y += 1
+		if keys[pygame.K_UP]:
+			input_vector.y -= 1
+		# WASD keys
+		if keys[pygame.K_d]:
+			input_vector.x += 1
+		if keys[pygame.K_a]:
+			input_vector.x -= 1
+		if keys[pygame.K_s]:
+			input_vector.y += 1
+		if keys[pygame.K_w]:
+			input_vector.y -= 1
+
+		if input_vector.length() > 0:
+			self.direction = input_vector.normalize()
+		else:
+			self.direction = vector(0, 0)
 
 	def move(self, dt):
 		self.rect.topleft += self.direction * self.speed * dt
@@ -26,3 +44,7 @@ class Player(pygame.sprite.Sprite):
 	def update(self, dt):
 		self.input()
 		self.move(dt)
+
+
+
+
