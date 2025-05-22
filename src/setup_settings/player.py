@@ -10,7 +10,45 @@ class Player(pygame.sprite.Sprite):
 		# movement 
 		self.direction = vector()
 		self.speed = 200
+		# jump
+		self.is_jumping = False
+		self.jump_count = 10
+	
+	def jump(self):
+		keys = pygame.key.get_pressed()
+		if keys[pygame.K_SPACE]:
+			if not self.is_jumping:
+				self.is_jumping = True
 
+		if self.is_jumping:
+			if self.jump_count >= -10:
+				neg = 1
+				if self.jump_count < 0:
+					neg = -1
+				self.rect.y -= (self.jump_count ** 2) * 0.5 * neg
+				self.jump_count -= 1
+			else: 
+				self.is_jumping = False
+				self.jump_count = 10	
+
+	def attack(self):
+		keys = pygame.key.get_pressed()
+		if pygame.mouse.get_pressed()[0]:
+			self.is_attacking = True
+		else:
+			self.is_attacking = False
+
+	def special_skill(self):
+		keys = pygame.key.get_pressed()
+		if keys[pygame.K_e]:
+			self.is_special_skill = True
+		else:
+			self.is_special_skill = False	
+
+	def shield(self):
+		# Implement the shield logic here
+		pass 
+    
 	def input(self):
 		keys = pygame.key.get_pressed()
 		input_vector = vector(0, 0)
@@ -32,6 +70,19 @@ class Player(pygame.sprite.Sprite):
 			input_vector.y += 1
 		if keys[pygame.K_w]:
 			input_vector.y -= 1
+		# Jump
+		if keys[pygame.K_SPACE]:
+			self.jump()
+		# Attack
+		if keys[pygame.K_LCTRL]:
+			self.attack()
+		# Special skill
+		if keys[pygame.K_e]:
+			self.special_skill()
+		# shield
+		if keys[pygame.K_q]:
+			self.shield()
+
 
 		if input_vector.length() > 0:
 			self.direction = input_vector.normalize()
@@ -44,7 +95,5 @@ class Player(pygame.sprite.Sprite):
 	def update(self, dt):
 		self.input()
 		self.move(dt)
-
-
-
-
+		self.jump()
+		self.attack()
