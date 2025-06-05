@@ -12,7 +12,7 @@ class Game:
         pygame.display.set_caption('dungeonTime')
         self.clock = pygame.time.Clock()
 
-        self.tmx_maps = {0: load_pygame(join('src', 'data', 'levels', 'simple_terrain_map.tmx'))}
+        self.tmx_maps = {0: load_pygame(join('src', 'data', 'levels', 'dungeon.tmx'))}
 
         self.current_stage = Level(self.tmx_maps[0])
 
