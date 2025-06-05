@@ -6,6 +6,27 @@ class Player(pygame.sprite.Sprite):
 		self.image = pygame.Surface((48,56))
 		self.image.fill('red')
 		self.rect = self.image.get_rect(topleft = pos)
+		# Player attributes
+		self.gender = "male"
+		self.name = "Alaric"
+		self.age = 25
+		self.hair_color = "brown"
+		self.hair_style = "short"
+		self.eye_color = "green"
+		self.height = 1,80
+		self.weight = 80
+		self.skin_color = "white"
+		self.occupation = "warrior"
+		self.body_type = "muscular"
+		self.features = ["scar on right eye", "tattoo on right side neck"]
+		self.clothing = {
+            "torso": "black armor with red deatils",
+            "legs": "black thick pants",
+            "feet": "black boots with red details",
+            "hands": "black leather gloves with free fingers",
+            "back": "sword with dried blood and a shield"
+        }
+           
 
 		# movement 
 		self.direction = vector()
