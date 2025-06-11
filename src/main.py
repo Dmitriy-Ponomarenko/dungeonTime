@@ -23,7 +23,7 @@ class Game:
                     pygame.quit()
                     sys.exit()
 
-            dt = self.clock.tick(60) / 1000.0
+            dt = self.clock.tick(120) / 1000.0
             self.current_stage.run(dt)
 
             pygame.display.update()
