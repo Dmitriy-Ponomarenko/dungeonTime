@@ -66,7 +66,7 @@ class Player(pygame.sprite.Sprite):
             'attack': ('src/data/graphics/player/player_attack3.png', 6, 100, 100),
         }
         BORDER_WIDTH = 128
-        BORDER_HEIGHT = 90
+        BORDER_HEIGHT = 96
 
         for state, (path, frames, fw, fh) in animation_data.items():
             sheet = pygame.image.load(path).convert_alpha()
@@ -77,7 +77,7 @@ class Player(pygame.sprite.Sprite):
                 final_frame = pygame.Surface((BORDER_WIDTH, BORDER_HEIGHT), pygame.SRCALPHA)
                 rect = scaled_frame.get_rect(center=final_frame.get_rect().center)
                 final_frame.blit(scaled_frame, rect)
-                pygame.draw.rect(final_frame, (255, 0, 0), final_frame.get_rect(), 3)
+                # pygame.draw.rect(final_frame, (255, 0, 0), final_frame.get_rect(), 3)
                 anim_frames.append(final_frame)
             self.animations[state] = anim_frames
 
@@ -97,9 +97,9 @@ class Player(pygame.sprite.Sprite):
             self.frame_index = 0
 
     def set_state(self):
+        prev_state = getattr(self, 'prev_state', None)
         if self.is_attacking:
             self.state = 'attack'
-            return
         elif self.is_jumping:
             if self.state == 'walk' and self.frozen_walk_frame is None:
                 self.frozen_walk_frame = self.frame_index
@@ -114,8 +114,15 @@ class Player(pygame.sprite.Sprite):
             self.state = 'idle'
             self.frozen_walk_frame = None
 
+        # Сброс индекса кадра если состояние изменилось
+        if self.state != prev_state:
+            self.frame_index = 0
+        self.prev_state = self.state
+
     def animate(self, dt):
         frames = self.animations[self.state]
+        if self.frame_index >= len(frames):
+            self.frame_index = 0
         if self.state == 'attack' and self.is_attacking:
             self.attack_anim_timer += dt
             anim_length = self.attack_anim_duration
@@ -214,3 +221,31 @@ class Player(pygame.sprite.Sprite):
         self.animate(dt)
         self.move(dt)
         self.update_jump()
+
+class Level:
+    def __init__(self):
+        # ... existing initialization code ...
+        self.camera_offset = pygame.Vector2(0, 0)
+        self.camera_speed = 0.1  # smaller = smoother
+
+    def get_player(self):
+        for sprite in self.all_sprites:
+            if isinstance(sprite, Player):
+                return sprite
+        return None
+
+    def update_camera(self):
+        player = self.get_player()
+        if player:
+            # Center camera on player, but smooth
+            target = pygame.Vector2(player.rect.center) - pygame.Vector2(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2)
+            self.camera_offset += (target - self.camera_offset) * self.camera_speed
+
+    def run(self, dt):
+        self.all_sprites.update(dt)
+        self.update_camera()
+        self.display_surface.fill('black')
+        for sprite in self.all_sprites:
+            offset_rect = sprite.rect.copy()
+            offset_rect.topleft -= self.camera_offset
+            self.display_surface.blit(sprite.image, offset_rect)
