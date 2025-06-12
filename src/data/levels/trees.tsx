@@ -182,4 +182,7 @@
     <tile id="59">
         <image source="../graphics/tiles/TREE 15_YELLOW.png" width="85" height="69" />
     </tile>
+    <tile id="60">
+        <image source="../graphics/tiles/camp.png" width="75" height="75" />
+    </tile>
 </tileset>

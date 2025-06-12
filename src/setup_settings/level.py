@@ -41,29 +41,42 @@ class Level:
                 if surf:
                     # Draw base (for collision, e.g. bottom 30px)
                     base_height = 30
-                    base_rect = pygame.Rect(
-                        0,
-                        surf.get_height() - base_height,
-                        surf.get_width(),
-                        base_height,
-                    )
-                    base_surf = surf.subsurface(base_rect).copy()
-                    base_sprite = Sprite(
-                        (obj.x, obj.y + surf.get_height() - base_height),
-                        base_surf,
-                        self.all_sprites,
-                        self.collision_sprites,
-                    )
-                    self.all_sprites.change_layer(base_sprite, 1)
+                    if surf.get_height() > base_height:
+                        base_rect = pygame.Rect(
+                            0,
+                            surf.get_height() - base_height,
+                            surf.get_width(),
+                            base_height,
+                        )
+                        base_surf = surf.subsurface(base_rect).copy()
+                        base_sprite = Sprite(
+                            (obj.x, obj.y + surf.get_height() - base_height),
+                            base_surf,
+                            self.all_sprites,
+                            self.collision_sprites,
+                        )
+                        self.all_sprites.change_layer(base_sprite, 1)
 
-                    # Draw top (over player)
-                    top_rect = pygame.Rect(
-                        0, 0, surf.get_width(), surf.get_height() - base_height
-                    )
-                    if top_rect.height > 0:
-                        top_surf = surf.subsurface(top_rect).copy()
-                        top_sprite = Sprite((obj.x, obj.y), top_surf, self.all_sprites)
-                        self.all_sprites.change_layer(top_sprite, 3)
+                        # Draw top (over player)
+                        top_rect = pygame.Rect(
+                            0, 0, surf.get_width(), surf.get_height() - base_height
+                        )
+                        if top_rect.height > 0:
+                            top_surf = surf.subsurface(top_rect).copy()
+                            top_sprite = Sprite((obj.x, obj.y), top_surf, self.all_sprites)
+                            self.all_sprites.change_layer(top_sprite, 3)
+                    else:
+                        # Image is too small, use the whole image
+                        base_surf = surf.copy()
+                        base_sprite = Sprite(
+                            (obj.x, obj.y),
+                            base_surf,
+                            self.all_sprites,
+                            self.collision_sprites,
+                        )
+                        self.all_sprites.change_layer(base_sprite, 1)
+
+                        # No top sprite needed, as the whole image is used for the base
 
     def create_map_borders(self):
         borders = [
