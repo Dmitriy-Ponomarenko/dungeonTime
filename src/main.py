@@ -92,6 +92,8 @@ class Game:
         self.display_surface.blit(s2, menu_rect.topleft)
 
     def run(self):
+        dungeon_menu = None
+        dungeon_idx = None
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -103,7 +105,25 @@ class Game:
                 elif self.state == "name_menu":
                     self.name_menu.handle_event(event)
                 elif self.state == "game":
-                    pass
+                    # Check for dungeon entry
+                    idx = self.current_stage.check_dungeon_proximity(
+                        self.current_stage.player.rect.center
+                    )
+                    if (
+                        idx is not None
+                        and event.type == pygame.KEYDOWN
+                        and event.key == pygame.K_e
+                    ):
+                        from setup_settings.dungeon_menu import DungeonMenu
+
+                        dungeon_menu = DungeonMenu(self.display_surface, None)
+                        dungeon_menu.player_health = self.player_health
+                        self.state = "dungeon"
+                        dungeon_idx = idx
+
+                elif self.state == "dungeon":
+                    if dungeon_menu:
+                        dungeon_menu.handle_event(event)
 
             dt = self.clock.tick(120) / 1000.0
 
@@ -116,6 +136,14 @@ class Game:
             elif self.state == "game":
                 self.current_stage.run(dt)
                 self.draw_hud()
+            elif self.state == "dungeon":
+                if dungeon_menu:
+                    dungeon_menu.run()
+                    # After dungeon ends, sync HP and return to game
+                    self.player_health = dungeon_menu.player_health
+                    self.current_stage.player.health = self.player_health
+                    self.state = "game"
+                    dungeon_menu = None
 
             pygame.display.update()
 

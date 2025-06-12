@@ -19,6 +19,15 @@ class Level:
         self._setup(tmx_map)
         self._create_map_borders()
 
+        # Define dungeon areas for proximity detection
+        self.dungeon_areas = [
+            pygame.Rect(2418 - 60, 753 - 75 / 2 - 60, 120, 120),
+            pygame.Rect(1066.5 - 60, 948.5 - 75 / 2 - 60, 120, 120),
+            pygame.Rect(395.5 - 60, 2004.5 - 75 / 2 - 60, 120, 120),
+            pygame.Rect(1453.17 - 60, 2582.5 - 75 / 2 - 60, 120, 120),
+            pygame.Rect(2409.17 - 60, 1903.83 - 75 / 2 - 60, 120, 120),
+        ]
+
     def _setup(self, tmx_map):
         """Setup level with optimized sprite creation."""
         # Cache terrain tiles to avoid repeated surface creation
@@ -84,6 +93,12 @@ class Level:
             border.image = pygame.Surface((w, h), pygame.SRCALPHA)
             border.rect = pygame.Rect(x, y, w, h)
 
+    def check_dungeon_proximity(self, player_pos):
+        for idx, rect in enumerate(self.dungeon_areas):
+            if rect.collidepoint(player_pos):
+                return idx  # Return dungeon index
+        return None
+
     def update_camera(self):
         """Smooth camera movement with bounds checking."""
         if self.player:
@@ -104,3 +119,12 @@ class Level:
         for sprite in self.all_sprites:
             offset_rect = sprite.rect.move(-self.camera_offset)
             self.display_surface.blit(sprite.image, offset_rect)
+
+        # After drawing sprites
+        dungeon_idx = self.check_dungeon_proximity(self.player.rect.center)
+        if dungeon_idx is not None:
+            font = pygame.font.SysFont("georgia", 28, bold=True)
+            msg = font.render("Press E to enter the dungeon", True, (255, 255, 180))
+            self.display_surface.blit(
+                msg, (WINDOW_WIDTH // 2 - msg.get_width() // 2, WINDOW_HEIGHT // 2 - 80)
+            )
