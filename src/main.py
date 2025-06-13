@@ -7,6 +7,17 @@ from pytmx.util_pygame import load_pygame
 from setup_settings.menu import StartMenu, LanguageMenu, NameMenu
 import glob
 
+# Import your dungeon modules
+from data.dungeons import dungeon1, dungeon2, dungeon3, dungeon4, dungeon5
+
+DUNGEON_FUNCTIONS = [
+    dungeon1.run_dungeon,
+    dungeon2.run_dungeon,
+    dungeon3.run_dungeon,
+    dungeon4.run_dungeon,
+    dungeon5.run_dungeon,
+]
+
 
 class Game:
     def __init__(self):
@@ -105,7 +116,6 @@ class Game:
                 elif self.state == "name_menu":
                     self.name_menu.handle_event(event)
                 elif self.state == "game":
-                    # Check for dungeon entry
                     idx = self.current_stage.check_dungeon_proximity(
                         self.current_stage.player.rect.center
                     )
@@ -116,7 +126,8 @@ class Game:
                     ):
                         from setup_settings.dungeon_menu import DungeonMenu
 
-                        dungeon_menu = DungeonMenu(self.display_surface, None)
+                        # Pass the correct dungeon function!
+                        dungeon_menu = DungeonMenu(self.display_surface, DUNGEON_FUNCTIONS[idx])
                         dungeon_menu.player_health = self.player_health
                         self.state = "dungeon"
                         dungeon_idx = idx
